@@ -1,4 +1,20 @@
 import React, { useMemo, useState } from "react";
+import {
+	Alert,
+	Box,
+	Button,
+	CircularProgress,
+	Paper,
+	Stack,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TextField,
+	Typography,
+} from "@mui/material";
 import { fetchTrades } from "../api/trades";
 import type { Trade } from "../api/trades";
 
@@ -41,82 +57,102 @@ const TradesListPage: React.FC<TradesListPageProps> = () => {
 	};
 
 	return (
-		<div style={{ padding: "1rem", maxWidth: 900, margin: "0 auto" }}>
-			<h1>Trades</h1>
-			<div style={{ display: "grid", gap: "0.5rem", marginBottom: "1rem" }}>
-				<label style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-					Account ID:
-					<input
+		<Box>
+			<Typography variant="h5" component="h2" gutterBottom>
+				Trades
+			</Typography>
+
+			<Paper sx={{ padding: 2, marginBottom: 3 }}>
+				<Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+					<TextField
+						label="Account ID"
 						type="number"
 						value={accountId}
 						onChange={(e) => setAccountId(e.target.value)}
-						placeholder="e.g. 1"
+						fullWidth
+						required
 					/>
-				</label>
-				<label style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-					From:
-					<input
+					<TextField
+						label="From (ISO)"
 						type="text"
 						value={from}
 						onChange={(e) => setFrom(e.target.value)}
-						placeholder="2024-01-01T00:00:00Z"
+						fullWidth
+						required
 					/>
-				</label>
-				<label style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-					To:
-					<input
+					<TextField
+						label="To (ISO)"
 						type="text"
 						value={to}
 						onChange={(e) => setTo(e.target.value)}
-						placeholder={nowIso}
+						fullWidth
+						required
 					/>
-				</label>
-				<label style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-					Symbol (optional):
-					<input
+					<TextField
+						label="Symbol (optional)"
 						type="text"
 						value={symbol}
 						onChange={(e) => setSymbol(e.target.value)}
-						placeholder="BTCUSDT"
+						fullWidth
 					/>
-				</label>
-				<button onClick={handleLoad} disabled={!canLoad || loading}>
-					{loading ? "Loading..." : "Load trades"}
-				</button>
-				{error && <div style={{ color: "red" }}>Error: {error}</div>}
-			</div>
+					<Button
+						variant="contained"
+						onClick={handleLoad}
+						disabled={!canLoad || loading}
+						sx={{ whiteSpace: "nowrap", minWidth: 140 }}
+					>
+						{loading ? "Loading..." : "Load trades"}
+					</Button>
+				</Stack>
+				{error && (
+					<Box mt={2}>
+						<Alert severity="error">{error}</Alert>
+					</Box>
+				)}
+			</Paper>
 
-			{trades.length > 0 ? (
-				<table style={{ width: "100%", borderCollapse: "collapse" }}>
-					<thead>
-						<tr>
-							<th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "0.5rem" }}>Date</th>
-							<th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "0.5rem" }}>Symbol</th>
-							<th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "0.5rem" }}>Side</th>
-							<th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "0.5rem" }}>Quantity</th>
-							<th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "0.5rem" }}>Price</th>
-							<th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "0.5rem" }}>Fee</th>
-							<th style={{ borderBottom: "1px solid #ccc", textAlign: "left", padding: "0.5rem" }}>Realized P&L</th>
-						</tr>
-					</thead>
-					<tbody>
-						{trades.map((trade) => (
-							<tr key={trade.id}>
-								<td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{trade.openedAt}</td>
-								<td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{trade.symbol}</td>
-								<td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{trade.side}</td>
-								<td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{trade.quantity}</td>
-								<td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{trade.price}</td>
-								<td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{trade.fee}</td>
-								<td style={{ borderBottom: "1px solid #eee", padding: "0.5rem" }}>{trade.realizedPnl}</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
-			) : (
-				!loading && <div>No trades loaded</div>
+			{loading && (
+				<Box display="flex" alignItems="center" gap={1}>
+					<CircularProgress size={20} />
+					<Typography>Loading...</Typography>
+				</Box>
 			)}
-		</div>
+
+			{!loading && trades.length === 0 && (
+				<Typography color="text.secondary">No trades loaded</Typography>
+			)}
+
+			{trades.length > 0 && (
+				<TableContainer component={Paper}>
+					<Table size="small">
+						<TableHead>
+							<TableRow>
+								<TableCell>Date</TableCell>
+								<TableCell>Symbol</TableCell>
+								<TableCell>Side</TableCell>
+								<TableCell>Quantity</TableCell>
+								<TableCell>Price</TableCell>
+								<TableCell>Fee</TableCell>
+								<TableCell>Realized P&amp;L</TableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{trades.map((trade) => (
+								<TableRow key={trade.id}>
+									<TableCell>{trade.openedAt}</TableCell>
+									<TableCell>{trade.symbol}</TableCell>
+									<TableCell>{trade.side}</TableCell>
+									<TableCell>{trade.quantity}</TableCell>
+									<TableCell>{trade.price}</TableCell>
+									<TableCell>{trade.fee}</TableCell>
+									<TableCell>{trade.realizedPnl}</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</TableContainer>
+			)}
+		</Box>
 	);
 };
 

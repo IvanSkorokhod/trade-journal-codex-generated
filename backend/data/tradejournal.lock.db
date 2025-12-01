@@ -1,6 +1,6 @@
 #FileLock
-#Mon Dec 01 16:14:17 CET 2025
-server=192.168.178.68\:59256
+#Mon Dec 01 16:48:34 CET 2025
+server=192.168.178.68\:61526
 hostName=macbookpro.fritz.box
 method=file
-id=19ada7a93bf74a7677fd7fa85dff9f3ae74dd68875d
+id=19ada99ef0944562ca0fc7cde2abe2e6577edc014df
